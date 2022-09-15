@@ -18,66 +18,35 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Engine\Color.h" />
-    <ClInclude Include="src\Engine\FrameBuffer.h" />
-    <ClInclude Include="src\Engine\FrameTimer.h" />
-    <ClInclude Include="src\Engine\Game.h" />
-    <ClInclude Include="src\Engine\GraniteMath.h" />
-    <ClInclude Include="src\Engine\Keyboard.h" />
-    <ClInclude Include="src\Engine\Mesh.h" />
-    <ClInclude Include="src\Engine\Core.h" />
-    <ClInclude Include="src\Engine\EntryPoint.h" />
-    <ClInclude Include="src\Engine\Triangle.h" />
-    <ClInclude Include="src\Engine\Vector2.h" />
-    <ClInclude Include="src\Engine\Window.h" />
-    <ClInclude Include="src\Engine\WindowProperties.h" />
-    <ClInclude Include="src\GraniteGame.h" />
-    <ClInclude Include="src\GraniteEngine.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Engine\Color.cpp" />
-    <ClCompile Include="src\Engine\FrameBuffer.cpp" />
-    <ClCompile Include="src\Engine\FrameTimer.cpp" />
-    <ClCompile Include="src\Engine\Game.cpp" />
-    <ClCompile Include="src\Engine\GraniteMath.cpp" />
-    <ClCompile Include="src\Engine\Keyboard.cpp" />
-    <ClCompile Include="src\Engine\Mesh.cpp" />
-    <ClCompile Include="src\Engine\Triangle.cpp" />
-    <ClCompile Include="src\Engine\Vector2.cpp" />
-    <ClCompile Include="src\Engine\Window.cpp" />
-    <ClCompile Include="src\Engine\WindowProperties.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{fff0c04c-284a-48a5-a074-906b551045b5}</ProjectGuid>
-    <RootNamespace>GraniteEngine</RootNamespace>
+    <ProjectGuid>{5bbe8c20-616b-4fd4-8a6b-6a903facfe27}</ProjectGuid>
+    <RootNamespace>Stein</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Engine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -102,36 +71,39 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)int\$(Configuration)-$(Platform)\</IntDir>
+    <OutDir>D:\Projects\GraniteEngine\GraniteGame\bin\$(Configuration)-$(Platform)\</OutDir>
+    <IntDir>D:\Projects\GraniteEngine\GraniteGame\int\$(Configuration)-$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)int\$(Configuration)-$(Platform)\</IntDir>
+    <OutDir>D:\Projects\GraniteEngine\GraniteGame\bin\$(Configuration)-$(Platform)\</OutDir>
+    <IntDir>D:\Projects\GraniteEngine\GraniteGame\int\$(Configuration)-$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)int\$(Configuration)-$(Platform)\</IntDir>
+    <OutDir>D:\Projects\GraniteEngine\GraniteGame\bin\$(Configuration)-$(Platform)\</OutDir>
+    <IntDir>D:\Projects\GraniteEngine\GraniteGame\int\$(Configuration)-$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)int\$(Configuration)-$(Platform)\</IntDir>
+    <OutDir>D:\Projects\GraniteEngine\GraniteGame\bin\$(Configuration)-$(Platform)\</OutDir>
+    <IntDir>D:\Projects\GraniteEngine\GraniteGame\int\$(Configuration)-$(Platform)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GRANITE_PLATFORM_WINDOWS;GRANITE_BUILD_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GRANITE_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Projects\GraniteEngine\GraniteEngine\src\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);winmm.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x64\;D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;winmm.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x64\Engine.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -139,35 +111,41 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GRANITE_PLATFORM_WINDOWS;GRANITE_BUILD_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GRANITE_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Projects\GraniteEngine\GraniteEngine\src\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);winmm.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x64\;D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;winmm.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x64\Engine.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GRANITE_PLATFORM_WINDOWS;GRANITE_BUILD_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GRANITE_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Projects\GraniteEngine\GraniteEngine\src\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);winmm.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x64\;D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;winmm.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x64\Engine.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -175,20 +153,35 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GRANITE_PLATFORM_WINDOWS;GRANITE_BUILD_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GRANITE_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>D:\Projects\GraniteEngine\GraniteEngine\src\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);winmm.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x64\;D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x32\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;winmm.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "D:\Projects\GraniteEngine\GraniteEngine\bin\Debug-x64\Engine.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Map.h" />
+    <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\Raycaster.h" />
+    <ClInclude Include="src\Stein.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Map.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Raycaster.cpp" />
+    <ClCompile Include="src\Stein.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

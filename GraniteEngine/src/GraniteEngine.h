@@ -15,6 +15,13 @@
 #define ConfigureWindow(s,w,h,l,t) Granite::WindowProperties properties = Granite::WindowProperties(s, w, h, l, t); _window.Reformat(properties); _frameBuffer.Resize(w,h);
 #define ShowFPS(x) _printFPS = x
 #define Run(x) return new x()
+#define GraniteFrameBuffer _frameBuffer
+#define GraniteWindow _window
+#define GraniteKeyboard _window.keyboard
+#define GraniteTime _time
+#define GraniteDeltaTime _deltaTime
+#define GraniteFPS _FPS
+#define NumFramesForFPScalc(x) _framesBeforeFPSupdate = x
 
 #ifndef GRANITE_INIT
 #define GRANITE_INIT
