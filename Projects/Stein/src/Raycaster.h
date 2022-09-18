@@ -14,34 +14,33 @@ enum class WallHitType { NONE, HORIZONTAL, VERTICAL };
 class Raycaster
 {
 public:
-	Raycaster(Player& p, Map& m, std::vector<float>& depthBuffer)
+	Raycaster(Player& p, Map& m)
 		:
 		_player(p),
 		_map(m),
-		_depthBuffer(depthBuffer),
 		_wallStartCoords(),
 		_wallEndCoords()
 	{ }
 
-	void Raycast(bool draw2Dmap = false);
-	void Setup(bool draw2Dmap);
-	float Calculate_Horizontal_Intersections();
-	float Calculate_Vertical_Intersections();
-	void Cache_Trig_Values(float rayAngle);
-	void Calculate_Shading(float dist_hor, float dist_ver);
+	void Initialize(float drawWidth = 8.0f);
+	float Raycast(float angle);
 
 	void Draw2Drays();
-	void DrawWallColumn(int column, int wallOffset, float texScale_x = 1.0f, float texScale_y = 1.0f, bool draw2Dmap = false);
+	void DrawWall(int column, int wallOffset, float texScale_x = 1.0f, float texScale_y = 1.0f, bool draw2Dmap = false);
 	void DrawFloors(int wallOffset, float texScale_x = 1.0f, float texScale_y = 1.0f, bool draw2Dmap = false);
 	void DrawCeilings(int wallOffset, float texScale_x = 1.0f, float texScale_y = 1.0f, bool draw2Dmap = false);
-	
+
+private:
+	void Cache_Trig_Values(float rayAngle);
+	float Calculate_Horizontal_Intersections();
+	float Calculate_Vertical_Intersections();
+	void Calculate_Shading(float dist_hor, float dist_ver);
 	float ClampAngle(float angle, float min, float max);
 	bool ClampToMap();
 
 private:
 	Player& _player;
 	Map& _map;
-	std::vector<float>& _depthBuffer;
 	std::vector<int> _wallStartCoords;
 	std::vector<int> _wallEndCoords;
 	float _angle = 0.0f;
@@ -63,4 +62,6 @@ private:
 	int _texture_index = 0;	
 	float _markerSize = 8;
 	int _drawWidth = 8;
+	float _distance = 0.0f;
+	bool _initialized = false;
 };

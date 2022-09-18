@@ -3,50 +3,25 @@
 
 #define texture_size 32
 
-void Raycaster::Raycast(bool draw2Dmap)
+float Raycaster::Raycast(float rayAngle)
 {
-	// Initialize some values
-	Setup(draw2Dmap);
+	if (!_initialized)
+		Initialize();
 
-	if (draw2Dmap)
-	{
-		DrawCeilings(0, 0.3f, 0.3f, draw2Dmap);
-		DrawFloors(0, 0.3f, 0.3f, draw2Dmap);
-	}
+	// Calculate angle relative to player, clapm it to (0, 2*PI), cache cos, sin, and tan of it
+	Cache_Trig_Values(rayAngle);
 
-	// Now loop over the rays within the player's FOV
-	int column = 0;
-	float degreeIncrement = 0.5f;
-	_drawWidth = degreeIncrement * GraniteWindow.ScreenWidth() / (_player.fov() * 180 / PI);
-	for (float rayAngle = -DR * _player.fov() * 180/PI / 2; rayAngle <= DR * _player.fov() * 180/PI / 2; rayAngle += degreeIncrement * DR)
-	{
-		// Calculate angle relative to player, clapm it to (0, 2*PI), cache cos, sin, and tan of it
-		Cache_Trig_Values(rayAngle);
+	// Cast rays, returning the distance of the ray from the player's position to the wall intersection (or max dof)
+	float dist_hor = Calculate_Horizontal_Intersections();
+	float dist_ver = Calculate_Vertical_Intersections();
 
-		// Cast rays, returning the distance of the ray from the player's position to the wall intersection (or max dof)
-		float dist_hor = Calculate_Horizontal_Intersections();
-		float dist_ver = Calculate_Vertical_Intersections();
+	// Calculate shading needed for walls
+	Calculate_Shading(dist_hor, dist_ver);
 
-		// Calculate shading needed for walls
-		Calculate_Shading(dist_hor, dist_ver);
-
-		// Draw 2D / 3D scene as requested by user
-		if (draw2Dmap) Draw2Drays();
-
-		DrawWallColumn(column, 0, 0.5f, 0.5f, draw2Dmap);
-		
-		// This variable tracks which column is being drawn
-		column++;
-	}
-
-	if (!draw2Dmap)
-	{
-		DrawCeilings(0, 0.2f, 0.2f, draw2Dmap);
-		DrawFloors(0, 0.2f, 0.2f, draw2Dmap);
-	}
+	return _distance;
 }
 
-void Raycaster::Setup(bool draw2Dmap)
+void Raycaster::Initialize(float drawWidth)
 {
 	// Setup size of plot points -- don't allow odd values	
 	int _pointSize = 8;
@@ -56,18 +31,12 @@ void Raycaster::Setup(bool draw2Dmap)
 	_rx = 0.0f;
 	_ry = 0.0f;
 
-	// Get the (i,j) coordinates of the cell containing the player's current position
-	int p_i = (int)_player.x();
-	int p_j = (int)_player.y();
-
-	// Color the tile that the _player is currently in red
-	if (draw2Dmap)
-	{
-	//	GraniteFrameBuffer.DrawRect(p_i * _map.cellsize(), p_j * _map.cellsize(), _map.cellsize(), _map.cellsize(), Granite::Color(100u, 100u, 100u));
-	}
+	_drawWidth = drawWidth;
 
 	_wallEndCoords.clear();
 	_wallStartCoords.clear();
+
+	_initialized = true;
 }
 
 void Raycaster::Cache_Trig_Values(float rayAngle)
@@ -92,7 +61,7 @@ void Raycaster::Calculate_Shading(float dist_hor, float dist_ver)
 	// The shorter of the two ray distances (ver or hor) is our ray of closest intersection. Use distance and intersection type to calculate shading.
 	if (dist_ver < dist_hor)
 	{
-		distance = dist_ver;
+		_distance = dist_ver;
 		_rx = _ver_rx;
 		_ry = _ver_ry;
 		_shade = 0.3f;
@@ -103,7 +72,7 @@ void Raycaster::Calculate_Shading(float dist_hor, float dist_ver)
 	{
 		// Making the horizontal walls just a tad darker with the shade value
 		// gives the impression of lighting calculations
-		distance = dist_hor;
+		_distance = dist_hor;
 		_rx = _hor_rx;
 		_ry = _hor_ry;
 		_shade = 1.0f;
@@ -336,7 +305,7 @@ void Raycaster::DrawCeilings(int wallOffset, float texScale_x, float texScale_y,
 	}
 }
 
-void Raycaster::DrawWallColumn(int column, int wallOffset, float texScale_x, float texScale_y, bool draw2Dmap)
+void Raycaster::DrawWall(int column, int wallOffset, float texScale_x, float texScale_y, bool draw2Dmap)
 {
 	// Fix the fisheye effect
 	float distance = (_rx - _player.x()) * _player.direction().x - (_ry - _player.y()) * -_player.direction().y;
@@ -394,7 +363,6 @@ void Raycaster::DrawWallColumn(int column, int wallOffset, float texScale_x, flo
 
 	_wallStartCoords.push_back(wallStart);
 	_wallEndCoords.push_back(wallEnd);
-	_depthBuffer.push_back(distance * distance);
 }
 
 float Raycaster::ClampAngle(float angle, float min, float max)

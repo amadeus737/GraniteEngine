@@ -14,9 +14,9 @@ Stein::Stein()
 	_playerFwdVelocity(Granite::Vector2f(0, 0)),
 	_playerBwdVelocity(Granite::Vector2f(0, 0)),
 	_walls(),
-	_depthBuffer(),
-	_raycaster(_player, _map, _depthBuffer),
-	_sprites()
+	_raycaster(_player, _map),
+	_sprites(),
+	_depthBuffer()
 {
 	_walls.reserve(64);
 }
@@ -26,7 +26,7 @@ void Stein::Start()
 	// Settings
 	ConfigureWindow(L"Stein Raycaster - Granite Engine v0.0a", 960, 551, 700, 150);
 	ShowFPS(true);
-	PlaySound("BabyElephantWalk60.wav", NULL, SND_FILENAME | SND_ASYNC);
+	//PlaySound("BabyElephantWalk60.wav", NULL, SND_FILENAME | SND_ASYNC);
 
 	_sprites =
 	{
@@ -253,7 +253,23 @@ void Stein::Render()
 	GraniteFrameBuffer.Clear(Granite::Color::Granite());
 
 	// Perform raycasting
-	_raycaster.Raycast(_draw2Dmap);
+	int column = 0;
+	int columnWidth = 2;
+	float degreeStep = (float)columnWidth* (_player.fov() * (float)(180 / PI)) / (float)(GraniteWindow.ScreenWidth());
+	
+	_raycaster.Initialize(columnWidth);
+	for (float rayAngle = -DR * _player.fov() * 180 / PI / 2; rayAngle <= DR * _player.fov() * 180 / PI / 2; rayAngle += degreeStep * DR)
+	{
+		// Perform the actual raycasting, storing the depth of each ray
+		_depthBuffer.push_back( _raycaster.Raycast(rayAngle));
+
+		_raycaster.DrawWall(column, 0, 1, 1, _draw2Dmap);
+
+		column++;
+	}
+
+	_raycaster.DrawCeilings(0, 1, 1, _draw2Dmap);
+	_raycaster.DrawFloors(0, 1, 1, _draw2Dmap);
 
 	// Draw 2D display of map and draw the player's position and direction
 	if (_draw2Dmap)
@@ -300,11 +316,12 @@ void Stein::DrawSprite(int index)
 	int x_end = width / 2.0f + (float)screen_x;
 	if (x_end >= GraniteWindow.ScreenWidth()) x_end = GraniteWindow.ScreenWidth() - 1;
 
-	//GraniteFrameBuffer.DrawRect(_sprites[index].x * _map.cellsize() - 2, _sprites[index].y * _map.cellsize() - 2, 4, 4, Granite::Color::LightBlue());
+	if (_draw2Dmap)
+		GraniteFrameBuffer.DrawRect(_sprites[index].x * _map.cellsize() - 2, _sprites[index].y * _map.cellsize() - 2, 4, 4, Granite::Color::LightBlue());
 
 	for (int x = x_start; x < x_end; x++)
 	{
-		//if (transform_y > 0 && x > 0 && x < GraniteWindow.ScreenWidth() && transform_y < _depthBuffer[x / 8])
+		if (transform_y > 0 && x > 0 && x < GraniteWindow.ScreenWidth() && transform_y < _depthBuffer[x / 8] * _map.cellsize())
 		{
 			for (int y = y_start; y < y_end; y++)
 			{
@@ -350,10 +367,11 @@ void Stein::CheckWallCollisions(int& fwd_x, int& fwd_y, int& back_x, int& back_y
 	else
 		wallCheck_y = 1;
 
-	int tile_add_i = (_player.x() + 0.3f * wallCheck_x);
-	int tile_sub_i = (_player.x() - 0.3f * wallCheck_x);
-	int tile_add_j = (_player.y() + 0.3f * wallCheck_y);
-	int tile_sub_j = (_player.y() - 0.3f * wallCheck_y);
+	float collisionRadius = 0.4f;
+	int tile_add_i = (_player.x() + collisionRadius * wallCheck_x);
+	int tile_sub_i = (_player.x() - collisionRadius * wallCheck_x);
+	int tile_add_j = (_player.y() + collisionRadius * wallCheck_y);
+	int tile_sub_j = (_player.y() - collisionRadius * wallCheck_y);
 
 	fwd_x = _walls[tile_p_j * _map.width() + tile_add_i];
 	fwd_y = _walls[tile_add_j * _map.width() + tile_p_i];

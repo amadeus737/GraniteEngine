@@ -10,6 +10,7 @@
 #include "Sprite.h"
 
 #define PI 3.141926535
+#define DR 0.0174533 // 1 deg in rads
 
 class Stein : GraniteGame
 {
@@ -33,9 +34,9 @@ private:
 	Granite::Vector2f _playerFwdVelocity;
 	Granite::Vector2f _playerBwdVelocity;
 	std::vector<int> _walls;
-	std::vector<float> _depthBuffer;
 	Raycaster _raycaster;
 	std::vector<Sprite> _sprites;
+	std::vector<float> _depthBuffer;
 	bool _wantsToDraw2Dmap = false;
 	bool _wantsToOpenDoor = false;
 	bool _draw2Dmap = false;
