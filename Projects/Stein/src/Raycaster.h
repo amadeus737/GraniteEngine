@@ -14,10 +14,11 @@ enum class WallHitType { NONE, HORIZONTAL, VERTICAL };
 class Raycaster
 {
 public:
-	Raycaster(Player& p, const Map& m)
+	Raycaster(Player& p, Map& m, std::vector<float>& depthBuffer)
 		:
 		_player(p),
 		_map(m),
+		_depthBuffer(depthBuffer),
 		_wallStartCoords(),
 		_wallEndCoords()
 	{ }
@@ -39,7 +40,8 @@ public:
 
 private:
 	Player& _player;
-	const Map& _map;
+	Map& _map;
+	std::vector<float>& _depthBuffer;
 	std::vector<int> _wallStartCoords;
 	std::vector<int> _wallEndCoords;
 	float _angle = 0.0f;

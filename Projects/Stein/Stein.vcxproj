@@ -171,12 +171,14 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Sprite.h" />
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\Raycaster.h" />
     <ClInclude Include="src\Stein.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Raycaster.cpp" />

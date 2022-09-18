@@ -51,7 +51,7 @@ public:
 	void SetWalls(const std::vector<int>& walls) { _walls = walls; }
 	void SetWallsAt(int index, int value) { _walls[index] = value; }
 	void SetWallTextures(const std::vector<unsigned char>& wallTextures) { _wallTextures = wallTextures; }
-
+	
 	// Draw functions
 	void DrawCell(const Coordinates& coords, Granite::Color c, bool clear = false) const;
 

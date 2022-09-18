@@ -11,10 +11,12 @@ Stein::Stein()
 	:
 	_map(),
 	_player(Granite::Vector2f(4.5f, 4.5f), 60.0f, 1.5f),
+	_playerFwdVelocity(Granite::Vector2f(0, 0)),
+	_playerBwdVelocity(Granite::Vector2f(0, 0)),
 	_walls(),
-	_raycaster(_player, _map),
-	_playerFwdVelocity(Granite::Vector2f(0,0)),
-	_playerBwdVelocity(Granite::Vector2f(0,0))
+	_depthBuffer(),
+	_raycaster(_player, _map, _depthBuffer),
+	_sprites()
 {
 	_walls.reserve(64);
 }
@@ -24,7 +26,12 @@ void Stein::Start()
 	// Settings
 	ConfigureWindow(L"Stein Raycaster - Granite Engine v0.0a", 960, 551, 700, 150);
 	ShowFPS(true);
-	//PlaySound("BabyElephantWalk60.wav", NULL, SND_FILENAME | SND_ASYNC);
+	PlaySound("BabyElephantWalk60.wav", NULL, SND_FILENAME | SND_ASYNC);
+
+	_sprites =
+	{
+		{  5.0f, 5.0f, 0, 0, 0, 32, 32}
+	};
 
 	_map.SetWidth(8);
 	_map.SetHeight(8);
@@ -245,10 +252,7 @@ void Stein::Render()
 	// Draw temporary ceiling
 	GraniteFrameBuffer.Clear(Granite::Color::Granite());
 
-	// Draw temporary floor
-	GraniteFrameBuffer.DrawRect(530, 0, 530, _map.scaledHeight() / 2 - 3, Granite::Color(90u, 90u, 90u));
-
-	// Perform raycasting with 60 degree FOV
+	// Perform raycasting
 	_raycaster.Raycast(_draw2Dmap);
 
 	// Draw 2D display of map and draw the player's position and direction
@@ -257,6 +261,76 @@ void Stein::Render()
 		DrawMap();
 		_player.DrawOnMap2D(_map.cellsize(), _map.width(), Granite::Color::Orange());
 	}
+
+	DrawSprite(0);
+}
+
+void Stein::DrawSprite(int index)
+{
+	// calculation position of sprite relative to camera
+	float dx = (_sprites[index].x - _player.x()) * _map.cellsize();
+	float dy = (_sprites[index].y - _player.y()) * _map.cellsize();
+
+	//transform sprite with the inverse camera matrix
+	// [ perpDirX   dirX ] -1                                         [ dirY          -dirX ]
+	// [               ]       =  1/(perpDirX*dirY-dirX*perpDirY) *   [                     ]
+	// [ perpDirY   dirY ]                                            [ -perpDirY  perpDirX ]
+	float invDet = 1.0f / (_player.perpdir_x() * _player.dir_y()  - _player.dir_x() * _player.perpdir_y()); 
+	float transform_x = invDet * (_player.dir_y() * dx - _player.dir_x() * dy);
+	float transform_y = invDet * (-_player.perpdir_y() * dx + _player.perpdir_x() * dy); //this is actually the depth inside the screen, that what Z is in 3D
+	 
+	// calculate height...prevent fisheye effect by using transform_y rather than distance
+	int height = abs(int((float)GraniteWindow.ScreenHeight() / transform_y));
+	if (height >= GraniteWindow.ScreenHeight()) height = GraniteWindow.ScreenHeight() - 1;
+
+	// calculate top and bottom y-coords of sprite
+	int y_start = -height / 2 + GraniteWindow.ScreenHeight() / 2;
+	if (y_start < 0) y_start = 0;
+	int y_end = height / 2 + GraniteWindow.ScreenHeight() / 2;
+	if (y_end >= GraniteWindow.ScreenHeight()) y_end = GraniteWindow.ScreenHeight() - 1;
+
+	// calculate width
+	int width = abs(int((float)GraniteWindow.ScreenHeight() / transform_y));
+	if (width >= GraniteWindow.ScreenWidth()) width = GraniteWindow.ScreenWidth() - 1;
+	int screen_x = int(((float)GraniteWindow.ScreenWidth() / 2.0f) * (1.0f + transform_x / transform_y));
+
+	// calculate left and right x-coords of sprite
+	int x_start = -width / 2.0f + (float)screen_x;
+	if (x_start < 0) x_start = 0;
+	int x_end = width / 2.0f + (float)screen_x;
+	if (x_end >= GraniteWindow.ScreenWidth()) x_end = GraniteWindow.ScreenWidth() - 1;
+
+	//GraniteFrameBuffer.DrawRect(_sprites[index].x * _map.cellsize() - 2, _sprites[index].y * _map.cellsize() - 2, 4, 4, Granite::Color::LightBlue());
+
+	for (int x = x_start; x < x_end; x++)
+	{
+		//if (transform_y > 0 && x > 0 && x < GraniteWindow.ScreenWidth() && transform_y < _depthBuffer[x / 8])
+		{
+			for (int y = y_start; y < y_end; y++)
+			{
+				GraniteFrameBuffer.DrawPixel(x, y, Granite::Color::LightBlue());
+			}
+		}
+	}
+
+	/*
+	// loop through every vertical stripe and blit the sprite on screen
+	for (int x = x_start; x < x_end; x++)
+	{
+		int tex_u = int(256 * (x - (-width / 2 + screen_x)) * _sprites[index].textureWidth / width) / 256;
+
+		if (transform_y > 0 && x > 0 && x < GraniteWindow.ScreenWidth() && transform_y < _map.GetDepthAt(x / 8))
+		{
+			for (int y = y_start; y < y_end; y++)
+			{
+				int d = (y) * 256 - GraniteWindow.ScreenHeight() * 128 + height * 128;
+				int tex_v = ((d * _sprites[index].textureHeight) / height) / 256;
+
+				GraniteFrameBuffer.DrawPixel(x, y, Granite::Color::Red());
+			}
+		}
+	}
+	*/
 }
 
 void Stein::CheckWallCollisions(int& fwd_x, int& fwd_y, int& back_x, int& back_y, bool& isDoor, int& doorIndex)

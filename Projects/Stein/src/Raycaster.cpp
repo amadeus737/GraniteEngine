@@ -10,8 +10,8 @@ void Raycaster::Raycast(bool draw2Dmap)
 
 	if (draw2Dmap)
 	{
-		DrawFloors(0, 0.3f, 0.3f, draw2Dmap);
 		DrawCeilings(0, 0.3f, 0.3f, draw2Dmap);
+		DrawFloors(0, 0.3f, 0.3f, draw2Dmap);
 	}
 
 	// Now loop over the rays within the player's FOV
@@ -41,8 +41,8 @@ void Raycaster::Raycast(bool draw2Dmap)
 
 	if (!draw2Dmap)
 	{
-		DrawFloors(0, 0.2f, 0.2f, draw2Dmap);
 		DrawCeilings(0, 0.2f, 0.2f, draw2Dmap);
+		DrawFloors(0, 0.2f, 0.2f, draw2Dmap);
 	}
 }
 
@@ -267,20 +267,29 @@ void Raycaster::DrawFloors(int wallOffset, float texScale_x, float texScale_y, b
 		int floor_i = (int)(floor_x);
 		int floor_j = (int)(floor_y);
 
-		for (int x = 0; x < GraniteWindow.ScreenWidth(); x++)
+		for (int x = 0; x < GraniteWindow.ScreenWidth(); x += _drawWidth)
 		{
 			int tex_u = (int)(texture_size * (floor_x - (float)floor_i) / texScale_x) & (texture_size - 1);
 			int tex_v = (int)(texture_size * (floor_y - (float)floor_j) / texScale_y) & (texture_size - 1);
 
-			float c = 255 * _map.GetWallTextures()[(int)(tex_v)*texture_size + (int)(tex_u)+32 * 32] * 0.7f;
+			int checkerBoardPattern = (int(floor_x) + int(floor_y)) % 2;
+			int diagonalPattern = (int(floor_x + floor_y)) % 2;
+			int floorTexture;
+			if (diagonalPattern == 0) floorTexture = 1;
+			else floorTexture = 2;
+			
+			float c = 255 * _map.GetWallTextures()[(int)(tex_v)*texture_size + (int)(tex_u)+32 * 32 * floorTexture] * 0.7f;
 
 			if (draw2Dmap || y >= _wallEndCoords[x/_drawWidth])
 			{
-				GraniteFrameBuffer.DrawPixel(x, y, Granite::Color(c, c/2, c/2) * (float)(1.5f * (y - (GraniteWindow.ScreenHeight() / 2 + wallOffset)) / (GraniteWindow.ScreenHeight())));
+				for (int i = -_drawWidth / 2; i < _drawWidth / 2; i++)
+				{
+					GraniteFrameBuffer.DrawPixel(x + (draw2Dmap ? 530 : 0) - i, y, Granite::Color(c, c / 2, c / 2) * (float)(1.5f * (y - (GraniteWindow.ScreenHeight() / 2 + wallOffset)) / (GraniteWindow.ScreenHeight())));
+				}
 			}
 
-			floor_x += step_x;
-			floor_y += step_y;
+			floor_x += step_x * _drawWidth;
+			floor_y += step_y * _drawWidth;
 		}
 	}
 }
@@ -306,7 +315,7 @@ void Raycaster::DrawCeilings(int wallOffset, float texScale_x, float texScale_y,
 		int floor_i = (int)(floor_x);
 		int floor_j = (int)(floor_y);
 
-		for (int x = 0; x < GraniteWindow.ScreenWidth(); x++)
+		for (int x = 0; x < GraniteWindow.ScreenWidth(); x += _drawWidth)
 		{
 			if (draw2Dmap || y <= _wallStartCoords[x/_drawWidth])
 			{
@@ -315,11 +324,14 @@ void Raycaster::DrawCeilings(int wallOffset, float texScale_x, float texScale_y,
 
 				float c = 255 * _map.GetWallTextures()[(int)(tex_v)*texture_size + (int)(tex_u)+32 * 32] * 0.3f;
 
-				GraniteFrameBuffer.DrawPixel(x, y, Granite::Color(c/2, c, c/2) * (float)(3.0f * (GraniteWindow.ScreenHeight() / 2 + wallOffset - y) / (GraniteWindow.ScreenHeight())));
+				for (int i = -_drawWidth / 2; i < _drawWidth / 2; i++)
+				{
+					GraniteFrameBuffer.DrawPixel(x + (draw2Dmap ? 530 : 0) - i, y, Granite::Color(c/2, c, c / 2) * (float)(3.0f * (GraniteWindow.ScreenHeight() / 2 + wallOffset - y) / (GraniteWindow.ScreenHeight())));
+				}
 			}
 
-			floor_x += step_x;
-			floor_y += step_y;
+			floor_x += step_x * _drawWidth;
+			floor_y += step_y * _drawWidth;
 		}
 	}
 }
@@ -369,7 +381,7 @@ void Raycaster::DrawWallColumn(int column, int wallOffset, float texScale_x, flo
 
 		float c = 255 * _map.GetWallTextures()[(int)(tex_v) * 32 + (int)(tex_u) + 32 * 32 * _texture_index] * _shade;
 
-		for (int x = -_drawWidth / 2; x <= _drawWidth / 2; x++)
+		for (int x = -_drawWidth / 2; x < _drawWidth / 2; x++)
 		{
 			GraniteFrameBuffer.DrawPixel(column * _drawWidth + (draw2Dmap ? 530 : 0) - x, y, Granite::Color(c, c, c/2));
 		}
@@ -382,6 +394,7 @@ void Raycaster::DrawWallColumn(int column, int wallOffset, float texScale_x, flo
 
 	_wallStartCoords.push_back(wallStart);
 	_wallEndCoords.push_back(wallEnd);
+	_depthBuffer.push_back(distance * distance);
 }
 
 float Raycaster::ClampAngle(float angle, float min, float max)

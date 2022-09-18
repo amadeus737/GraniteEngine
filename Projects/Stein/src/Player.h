@@ -38,6 +38,6 @@ private:
 	float _tan_half_fov = 0.0f;
 	float _fov = 0.0f;
 	float _angle = 0.0f;
-	float _turnRate = 2.0f;
+	float _turnRate = 3.0f;
 	float _visibilityDistance = 2.5f;
 };
