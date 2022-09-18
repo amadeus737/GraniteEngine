@@ -10,7 +10,7 @@ Granite::Game* Granite::LaunchGame()
 Stein::Stein()
 	:
 	_map(),
-	_player(Granite::Vector2f(4.5f, 4.5f), 1.5f),
+	_player(Granite::Vector2f(4.5f, 4.5f), 60.0f, 1.5f),
 	_walls(),
 	_raycaster(_player, _map),
 	_playerFwdVelocity(Granite::Vector2f(0,0)),
@@ -22,7 +22,7 @@ Stein::Stein()
 void Stein::Start()
 {
 	// Settings
-	ConfigureWindow(L"Stein Raycaster - Granite Engine v0.0a", 1024, 555, 700, 150);
+	ConfigureWindow(L"Stein Raycaster - Granite Engine v0.0a", 960, 551, 700, 150);
 	ShowFPS(true);
 	//PlaySound("BabyElephantWalk60.wav", NULL, SND_FILENAME | SND_ASYNC);
 
@@ -34,11 +34,11 @@ void Stein::Start()
 
 	_walls =
 	{
-		2, 1, 1, 1, 1, 1, 1, 2,
-		2, 0, 1, 0, 1, 0, 0, 2,
-		2, 0, 1, 0, 1, 0, 0, 2,
-		2, 0, 1, 3, 1, 0, 0, 2,
-		2, 0, 0, 0, 0, 1, 0, 2,
+		2, 2, 2, 2, 2, 2, 2, 2,
+		2, 0, 2, 0, 0, 2, 0, 2,
+		2, 0, 3, 0, 0, 3, 0, 2,
+		2, 0, 2, 3, 2, 2, 0, 2,
+		2, 0, 0, 0, 0, 0, 0, 2,
 		2, 0, 0, 0, 0, 0, 0, 2,
 		2, 0, 0, 0, 0, 0, 0, 2,
 		2, 2, 2, 2, 2, 2, 2, 2
@@ -248,15 +248,15 @@ void Stein::Render()
 	// Draw temporary floor
 	GraniteFrameBuffer.DrawRect(530, 0, 530, _map.scaledHeight() / 2 - 3, Granite::Color(90u, 90u, 90u));
 
+	// Perform raycasting with 60 degree FOV
+	_raycaster.Raycast(_draw2Dmap);
+
 	// Draw 2D display of map and draw the player's position and direction
 	if (_draw2Dmap)
 	{
 		DrawMap();
 		_player.DrawOnMap2D(_map.cellsize(), _map.width(), Granite::Color::Orange());
 	}
-
-	// Perform raycasting with 60 degree FOV
-	_raycaster.Raycast(60.0f, _draw2Dmap);
 }
 
 void Stein::CheckWallCollisions(int& fwd_x, int& fwd_y, int& back_x, int& back_y, bool& isDoor, int& doorIndex)
@@ -288,7 +288,7 @@ void Stein::CheckWallCollisions(int& fwd_x, int& fwd_y, int& back_x, int& back_y
 
 	doorIndex = tile_add_j * _map.width() + tile_add_i;
 	
-	if (_wantsToOpenDoor)
+	if (_wantsToOpenDoor && _walls[doorIndex] == 3)
 	{
 		_map.SetWallsAt(doorIndex, 0);
 		_walls[doorIndex] = 0;
